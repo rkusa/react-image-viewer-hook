@@ -1,0 +1,52 @@
+{
+  "name": "react-image-viewer-hook",
+  "author": "Markus Ast",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rkusa/react-image-viewer-hook.git"
+  },
+  "license": "MIT",
+  "description": "Image viewer (aka Lightbox) React Hook",
+  "keywords": [
+    "react",
+    "hook",
+    "images",
+    "gallery",
+    "viewer",
+    "lightbox"
+  ],
+  "main": "dist/useImageViewer.cjs.js",
+  "typings": "dist/useImageViewer.d.ts",
+  "module": "dist/useImageViewer.js",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "rimraf dist && node build.js && tsc --emitDeclarationOnly",
+    "prepare": "npm run build",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-spring/web": "^9.2.4",
+    "@use-gesture/react": "^10.0.1",
+    "react-focus-lock": "^2.5.2",
+    "react-remove-scroll": "^2.4.3"
+  },
+  "peerDependencies": {
+    "react": ">=16"
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.1",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "esbuild": "^0.13.3",
+    "react": "^17.0.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.1.2"
+  },
+  "engines": {
+    "node": ">=10"
+  }
+}
