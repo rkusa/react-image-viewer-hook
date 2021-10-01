@@ -37,8 +37,18 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
   // an image.
   const offset = useRef<[number, number]>([0, 0]);
 
-  const width = window.innerWidth;
-  const height = window.innerHeight;
+  // Keep track of the window size (and changes to it).
+  const [[windowWidth, windowHeight], setWindowSize] = useState([
+    window.innerWidth,
+    window.innerHeight,
+  ]);
+  useEffect(() => {
+    function handleResize() {
+      setWindowSize([window.innerWidth, window.innerHeight]);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // The animation for the black backdrop behind the image viewer. Used to fade the backdrop in and
   // out.
@@ -54,7 +64,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
 
   // The animations for all images.
   const [props, api] = useSprings(images.length, (i) => ({
-    h: horizontalPosition(i, index, width),
+    h: horizontalPosition(i, index, windowWidth),
     x: 0,
     y: 0,
     // Prepare the enter animation of the active image.
@@ -98,7 +108,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
       }
 
       return {
-        h: horizontalPosition(i, index, width),
+        h: horizontalPosition(i, index, windowWidth),
         x: 0,
         y: 0,
         scale: 1,
@@ -177,7 +187,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
             }
             // Change index if this is the drag end (last) and the image was moved past half the
             // screen width.
-            else if (last && Math.abs(mx) > width / 2) {
+            else if (last && Math.abs(mx) > windowWidth / 2) {
               newIndex = clamp(index + (mx > 0 ? -1 : 1), 0, images.length - 1);
               setIndex(newIndex);
             }
@@ -186,7 +196,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
 
           case "dismiss":
             // Close the image viewer is the image got released after dragging it at least 10% down.
-            if (last && my > 0 && my / height > 0.1) {
+            if (last && my > 0 && my / windowHeight > 0.1) {
               close();
               return;
             }
@@ -195,7 +205,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
               backdropApi.start({
                 backgroundColor: `rgba(0, 0, 0, ${Math.max(
                   0,
-                  1 - (Math.abs(my) / height) * 2
+                  1 - (Math.abs(my) / windowHeight) * 2
                 )})`,
               });
             }
@@ -214,7 +224,8 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
           }
 
           // Calculate the new horizontal position.
-          const h = horizontalPosition(i, newIndex, width) + (active ? mx : 0);
+          const h =
+            horizontalPosition(i, newIndex, windowWidth) + (active ? mx : 0);
 
           switch (mode.current) {
             // When sliding, mainly update the horizontal position.
@@ -227,7 +238,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
             case "dismiss":
               const y = active ? my : 0;
               const scale = active
-                ? Math.max(1 - Math.abs(my) / height / 2, 0.8)
+                ? Math.max(1 - Math.abs(my) / windowHeight / 2, 0.8)
                 : 1;
               return { h, y, scale, display: "flex", immediate: active };
 
@@ -286,8 +297,8 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
         // Keep track of the offset when first starting to pinch.
         if (first) {
           // This is the offset between the image's origin (in its center) and the pinch origin.
-          const originOffsetX = ox - (width / 2 + offset.current[0]);
-          const originOffsetY = oy - (height / 2 + offset.current[1]);
+          const originOffsetX = ox - (windowWidth / 2 + offset.current[0]);
+          const originOffsetY = oy - (windowHeight / 2 + offset.current[1]);
 
           memo = {
             origin: {
