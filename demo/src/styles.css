@@ -1,0 +1,16 @@
+body {
+  margin: 18x;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(100px, 300px));
+  gap: 8px;
+}
+
+.gallery img {
+  max-width: 100%;
+}

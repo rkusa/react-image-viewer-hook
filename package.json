@@ -26,6 +26,7 @@
   "scripts": {
     "build": "rimraf dist && node build.js && tsc --emitDeclarationOnly",
     "prepare": "npm run build",
+    "demo": "vite --host 0.0.0.0 --config ./demo/vite.config.ts --clearScreen false",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -39,12 +40,15 @@
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
+    "@types/node": "^16.10.2",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@vitejs/plugin-react": "^1.0.1",
     "esbuild": "^0.13.3",
     "react": "^17.0.1",
     "rimraf": "^3.0.2",
-    "typescript": "^4.1.2"
+    "typescript": "^4.1.2",
+    "vite": "^2.6.2"
   },
   "engines": {
     "node": ">=10"
