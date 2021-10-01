@@ -2,6 +2,8 @@
 
 Image viewer (aka Lightbox) made for React. Images only (no videos, iframes, custom html, ...), with a focus on touch interactions (swipe between images, pinch to zoom, pan around, swipe down to dismiss). Internal heavy lifting is done by [`react-spring`](https://github.com/pmndrs/react-spring) and [`use-gesture`](https://github.com/pmndrs/use-gesture). Supports code-splitting by default (image viewer code is only loaded once first opened). The image viewer chunk comes at around 37kB gzipped.
 
+Demo: https://codesandbox.io/s/react-image-viewer-hook-demo-6ty7g
+
 Example:
 
 ```tsx
