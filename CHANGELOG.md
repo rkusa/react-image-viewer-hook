@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Fixed
 - Prevent further interactions during the close animation.
+- Set `z-index` of image viewer to `9999`.
 
 ## [0.1.1] - 2021-10-01
 ### Fixed

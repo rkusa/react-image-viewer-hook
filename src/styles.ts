@@ -24,6 +24,7 @@ export const DIALOG_STYLE: CSSProperties = {
   display: "flex",
   overflow: "hidden",
   marginRight: 32,
+  zIndex: 9999,
 };
 
 // Default style of the slides (image containers).
