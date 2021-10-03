@@ -5,10 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-- Prevent further interactions during the close animation.
+### Changed
 - Set `z-index` of image viewer to `9999`.
 - Lazy load images (except active and adjacent ones).
+
+### Fixed
+- Prevent further interactions during the close animation.
+- Fixed Escape key press to close image viewer.
 
 ## [0.1.1] - 2021-10-01
 ### Fixed

@@ -1,10 +1,4 @@
-import React, {
-  KeyboardEvent,
-  useEffect,
-  useRef,
-  useState,
-  CSSProperties,
-} from "react";
+import React, { useEffect, useRef, useState, CSSProperties } from "react";
 import { useSprings, useSpring, animated } from "@react-spring/web";
 import { useGesture } from "@use-gesture/react";
 import { RemoveScroll } from "react-remove-scroll";
@@ -152,11 +146,16 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
   }
 
   // Close image viewer when Escape is pressed.
-  function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
-    if (e.key === "Escape") {
-      close();
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        close();
+      }
     }
-  }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Setup all gestures.
   const bind = useGesture(
@@ -390,7 +389,6 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
         <animated.div
           role="dialog"
           aria-label="image viewer"
-          onKeyDown={handleKeyDown}
           style={{
             ...DIALOG_STYLE,
             ...backdropProps,
