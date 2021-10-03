@@ -12,6 +12,7 @@ export const BUTTON_STYLE: CSSProperties = {
   justifyContent: "center",
   alignItems: "center",
   padding: 0,
+  zIndex: 9999,
 };
 
 // Default style of the image viewer dialog.
