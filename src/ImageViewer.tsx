@@ -23,6 +23,9 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
     clamp(defaultIndex ?? 0, 0, images.length)
   );
 
+  // Track whether the close animation is running. This is used to disable any interactions.
+  const [isClosing, setClosing] = useState(false);
+
   // Make sure the index is never out of bounds if `images` changes.
   useEffect(() => {
     setIndex(clamp(index, 0, images.length));
@@ -119,6 +122,8 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
 
   // Close the image viewer (awaits the exit animation before actually closing the viewer).
   function close() {
+    setClosing(true);
+
     api.start((i) => {
       if (i !== index) {
         return;
@@ -369,7 +374,11 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
       },
     },
     {
+      drag: {
+        enabled: !isClosing,
+      },
       pinch: {
+        enabled: !isClosing,
         scaleBounds: { min: 1.0, max: Infinity },
       },
     }
