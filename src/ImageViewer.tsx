@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, CSSProperties } from "react";
+import React, { useEffect, useRef, useState, MouseEvent } from "react";
 import { useSprings, useSpring, animated } from "@react-spring/web";
 import { useGesture } from "@use-gesture/react";
 import { RemoveScroll } from "react-remove-scroll";
@@ -179,6 +179,73 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  function startPinch() {
+    mode.current = "pinch";
+    // Hide the buttons while pinching.
+    buttonApi.start({ display: "none" });
+  }
+
+  function stopPinch() {
+    // When the image is reset back to the center and initial scale, also end the `pinch` mode.
+    offset.current = [0, 0];
+    mode.current = null;
+
+    // Show the buttons again.
+    buttonApi.start({ display: "flex" });
+  }
+
+  function handleDoubleClick(e: MouseEvent) {
+    if (isClosing) {
+      return;
+    }
+
+    const img = e.target as HTMLImageElement;
+    if (!(img instanceof HTMLImageElement)) {
+      console.warn("Expected double tap target to be an image");
+      return;
+    }
+
+    api.start((i, ctrl) => {
+      if (i !== index) {
+        return;
+      }
+
+      if (mode.current === "pinch") {
+        stopPinch();
+        return { scale: 1, x: 0, y: 0 };
+      } else {
+        // Scale the image to its actual size.
+        const newScale = img.naturalWidth / img.width;
+        if (newScale < 1.0) {
+          // No need to scale if the image is smaller than the screen size.
+          return;
+        }
+
+        // Calculate the image movement to zoom at the location the user tapped clicked at.
+        const originOffsetX = e.pageX - (windowWidth / 2 + offset.current[0]);
+        const originOffsetY = e.pageY - (windowHeight / 2 + offset.current[1]);
+
+        const scale = ctrl.get().scale;
+        const refX = originOffsetX / scale;
+        const refY = originOffsetY / scale;
+
+        const transformOriginX = refX * newScale - originOffsetX;
+        const transformOriginY = refY * newScale - originOffsetY;
+
+        offset.current[0] -= transformOriginX;
+        offset.current[1] -= transformOriginY;
+
+        startPinch();
+
+        return {
+          scale: newScale,
+          x: offset.current[0],
+          y: offset.current[1],
+        };
+      }
+    });
+  }
+
   // Setup all gestures.
   const bind = useGesture(
     {
@@ -315,9 +382,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
         }
 
         if (mode.current !== "pinch") {
-          mode.current = "pinch";
-          // Hide the buttons while pinching.
-          buttonApi.start({ display: "none" });
+          startPinch();
         }
 
         // Keep track of the offset when first starting to pinch.
@@ -377,13 +442,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
 
         if (last) {
           if (scale <= 1.1) {
-            // When the image is reset back to the center and initial scale, also end the `pinch`
-            // mode.
-            offset.current = [0, 0];
-            mode.current = null;
-
-            // Show the buttons again.
-            buttonApi.start({ display: "flex" });
+            stopPinch();
           } else {
             // Keep track of the current drag position so that the user can continue manipulating
             // the current position in a follow-up drag or pinch.
@@ -401,6 +460,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
       pinch: {
         enabled: !isClosing,
         scaleBounds: { min: 1.0, max: Infinity },
+        from: () => [api.current[index].get().scale, 0],
       },
     }
   );
@@ -415,6 +475,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
             ...DIALOG_STYLE,
             ...backdropProps,
           }}
+          onDoubleClick={handleDoubleClick}
         >
           {props.map(({ h, x, y, scale, opacity, display }, i) => (
             <animated.div

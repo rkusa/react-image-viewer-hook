@@ -5,12 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added left/right arrow key navigation.
+- Added double-tap to zoom images to their actual size (or zoom out if already zoomed in).
+
 ### Changed
 - Set `z-index` of image viewer to `9999`.
 - Lazy load images (except active and adjacent ones).
-
-### Added
-- Added left/right arrow key navigation.
 
 ### Fixed
 - Prevent further interactions during the close animation.
