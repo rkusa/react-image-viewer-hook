@@ -414,6 +414,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
                   scale,
                   opacity,
                 }}
+                loading={Math.abs(index - i) > 1 ? "lazy" : "eager"}
                 src={images[i]}
                 draggable={false}
               />
