@@ -14,7 +14,7 @@ interface Props {
 export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
   // Keep track of the currently active image index.
   const [index, setIndex] = useState(
-    clamp(defaultIndex ?? 0, 0, images.length)
+    clamp(defaultIndex ?? 0, 0, images.length - 1)
   );
 
   // Track whether the close animation is running. This is used to disable any interactions.
@@ -22,7 +22,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
 
   // Make sure the index is never out of bounds if `images` changes.
   useEffect(() => {
-    setIndex(clamp(index, 0, images.length));
+    setIndex(clamp(index, 0, images.length - 1));
   }, [images]);
 
   // The current modality the image viewer is in.
@@ -116,6 +116,10 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
 
   // Close the image viewer (awaits the exit animation before actually closing the viewer).
   function close() {
+    if (isClosing) {
+      return;
+    }
+
     setClosing(true);
 
     api.start((i) => {
@@ -145,11 +149,29 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
     });
   }
 
+  function nextImage() {
+    setIndex((index) => clamp(index + 1, 0, images.length - 1));
+  }
+
+  function previousImage() {
+    setIndex((index) => clamp(index - 1, 0, images.length - 1));
+  }
+
   // Close image viewer when Escape is pressed.
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        close();
+      switch (e.code) {
+        case "Escape":
+          close();
+          break;
+
+        case "ArrowLeft":
+          previousImage();
+          break;
+
+        case "ArrowRight":
+          nextImage();
+          break;
       }
     }
 
@@ -466,7 +488,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
               left: 16,
               marginTop: -20,
             }}
-            onClick={() => setIndex((index) => index - 1)}
+            onClick={previousImage}
           >
             <svg
               width="18"
@@ -497,7 +519,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
               right: 16,
               marginTop: -20,
             }}
-            onClick={() => setIndex((index) => index + 1)}
+            onClick={nextImage}
           >
             <svg
               width="18"

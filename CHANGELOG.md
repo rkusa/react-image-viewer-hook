@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Set `z-index` of image viewer to `9999`.
 - Lazy load images (except active and adjacent ones).
 
+### Added
+- Added left/right arrow key navigation.
+
 ### Fixed
 - Prevent further interactions during the close animation.
 - Fixed Escape key press to close image viewer.
