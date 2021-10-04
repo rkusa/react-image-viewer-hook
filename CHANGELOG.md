@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.4] - 2021-10-04
+### Fixed
+- Fixed double click to zoom on images while body is scrolled down.
+
 ## [0.1.3] - 2021-10-04
 ### Added
 - Added option for different image sources.
@@ -31,7 +35,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/rkusa/react-image-viewer-hook/compare/0.1.3...HEAD
+[Unreleased]: https://github.com/rkusa/react-image-viewer-hook/compare/0.1.4...HEAD
+[0.1.2]: https://github.com/rkusa/react-image-viewer-hook/releases/tag/0.1.3...0.1.4
 [0.1.2]: https://github.com/rkusa/react-image-viewer-hook/releases/tag/0.1.2...0.1.3
 [0.1.2]: https://github.com/rkusa/react-image-viewer-hook/releases/tag/0.1.1...0.1.2
 [0.1.1]: https://github.com/rkusa/react-image-viewer-hook/releases/tag/0.1.0...0.1.1

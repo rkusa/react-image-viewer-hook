@@ -223,8 +223,9 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
         }
 
         // Calculate the image movement to zoom at the location the user tapped clicked at.
-        const originOffsetX = e.pageX - (windowWidth / 2 + offset.current[0]);
-        const originOffsetY = e.pageY - (windowHeight / 2 + offset.current[1]);
+        const originOffsetX = e.clientX - (windowWidth / 2 + offset.current[0]);
+        const originOffsetY =
+          e.clientY - (windowHeight / 2 + offset.current[1]);
 
         const scale = ctrl.get().scale;
         const refX = originOffsetX / scale;
@@ -491,7 +492,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
               <picture>
                 {Object.entries(images[i][1]?.sources ?? {}).map(
                   ([type, srcSet]) => (
-                    <source type={type} srcSet={srcSet} />
+                    <source key={type} type={type} srcSet={srcSet} />
                   )
                 )}
 
