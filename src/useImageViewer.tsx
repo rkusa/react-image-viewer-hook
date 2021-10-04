@@ -20,13 +20,20 @@ export interface ImageViewerProps {
   fallback?: ReactNode;
 }
 
+export interface ImageOpts {
+  /**
+   * A map of mime types to source sets. Will be added as additional sources to the picture tag.
+   */
+  sources?: Record<string, string>;
+}
+
 /**
  * Create an image viewer component and a `onClick` factory (`getOnClick`) used to add images to the
  * viewer and open it.
  */
 export function useImageViewer() {
   // Keep track of all images added via `getOnClick`. Re-create the list on each render.
-  const images = useRef<Array<string>>([]);
+  const images = useRef<Array<[string, ImageOpts | undefined]>>([]);
   images.current.length = 0;
 
   // Keep track of all dispatch functions used to open all `<ImageViewer />` instances.
@@ -63,10 +70,10 @@ export function useImageViewer() {
      * the viewer once invoked.
      * @param url The URL of the image that should be added to the image viewer.
      */
-    getOnClick(url?: string): MouseEventHandler {
+    getOnClick(url?: string, opts?: ImageOpts): MouseEventHandler {
       const index = images.current.length;
       if (url) {
-        images.current.push(url);
+        images.current.push([url, opts]);
       }
 
       return (e) => {

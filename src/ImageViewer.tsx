@@ -4,9 +4,10 @@ import { useGesture } from "@use-gesture/react";
 import { RemoveScroll } from "react-remove-scroll";
 import FocusLock from "react-focus-lock";
 import { BUTTON_STYLE, DIALOG_STYLE, IMAGE_STYLE, SLIDE_STYLE } from "./styles";
+import { ImageOpts } from "./useImageViewer";
 
 interface Props {
-  images: Array<string>;
+  images: Array<[string, ImageOpts | undefined]>;
   defaultIndex?: number;
   onClose(): void;
 }
@@ -386,7 +387,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
         }
 
         // Keep track of the offset when first starting to pinch.
-        if (first) {
+        if (first || !memo) {
           // This is the offset between the image's origin (in its center) and the pinch origin.
           const originOffsetX = ox - (windowWidth / 2 + offset.current[0]);
           const originOffsetY = oy - (windowHeight / 2 + offset.current[1]);
@@ -487,18 +488,26 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
                 x: h,
               }}
             >
-              <animated.img
-                style={{
-                  ...IMAGE_STYLE,
-                  x: x,
-                  y: y,
-                  scale,
-                  opacity,
-                }}
-                loading={Math.abs(index - i) > 1 ? "lazy" : "eager"}
-                src={images[i]}
-                draggable={false}
-              />
+              <picture>
+                {Object.entries(images[i][1]?.sources ?? {}).map(
+                  ([type, srcSet]) => (
+                    <source type={type} srcSet={srcSet} />
+                  )
+                )}
+
+                <animated.img
+                  style={{
+                    ...IMAGE_STYLE,
+                    x: x,
+                    y: y,
+                    scale,
+                    opacity,
+                  }}
+                  loading={Math.abs(index - i) > 1 ? "lazy" : "eager"}
+                  src={images[i][0]}
+                  draggable={false}
+                />
+              </picture>
             </animated.div>
           ))}
         </animated.div>
