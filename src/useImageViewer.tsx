@@ -37,14 +37,17 @@ export function useImageViewer() {
   images.current.length = 0;
 
   // Keep track of all dispatch functions used to open all `<ImageViewer />` instances.
-  const setOpens: Array<Dispatch<SetStateAction<undefined | number>>> = [];
+  const setOpens = useRef<Array<Dispatch<SetStateAction<undefined | number>>>>(
+    []
+  );
+  setOpens.current.length = 0;
 
   // A wrapper around `LazyImageViewer` that connects it with the images of this hook.
   const ImageViewer = useCallback(function ImageViewer({
     fallback,
   }: ImageViewerProps) {
     const [isOpen, setOpen] = useState<undefined | number>(undefined);
-    setOpens.push(setOpen);
+    setOpens.current.push(setOpen);
 
     const handleClose = useCallback(() => setOpen(undefined), []);
 
@@ -79,7 +82,7 @@ export function useImageViewer() {
       return (e) => {
         e.preventDefault();
 
-        for (const setOpen of setOpens) {
+        for (const setOpen of setOpens.current) {
           setOpen(index);
         }
       };
