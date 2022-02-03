@@ -559,8 +559,8 @@ export default function ImageViewer({
         {children ? (
           children({
             close,
-            previous: previousImage,
-            next: nextImage,
+            previous: index > 0 ? previousImage : undefined,
+            next: index < images.length - 1 ? nextImage : undefined,
             Button,
           })
         ) : (
