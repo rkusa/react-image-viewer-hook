@@ -1,7 +1,7 @@
 {
   "name": "react-image-viewer-hook",
   "author": "Markus Ast",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rkusa/react-image-viewer-hook.git"

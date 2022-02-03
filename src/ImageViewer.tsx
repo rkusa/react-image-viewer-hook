@@ -8,6 +8,7 @@ import React, {
   DetailedHTMLProps,
   ButtonHTMLAttributes,
   useMemo,
+  useCallback,
 } from "react";
 import {
   useSprings,
@@ -21,26 +22,27 @@ import FocusLock from "react-focus-lock";
 import { BUTTON_STYLE, DIALOG_STYLE, IMAGE_STYLE, SLIDE_STYLE } from "./styles";
 import { ImageOpts } from "./useImageViewer";
 
-interface Props {
-  images: Array<[string, ImageOpts | undefined]>;
+interface Props<T = unknown> {
+  images: Array<[string, ImageOpts<T> | undefined]>;
   defaultIndex?: number;
   onClose(): void;
-  children?(handler: ChildrenHandler): ReactNode;
+  children?(handler: ChildrenHandler<T>): ReactNode;
 }
 
-export interface ChildrenHandler {
+export interface ChildrenHandler<T = unknown> {
+  current(): T | undefined;
   close(): void;
   previous?(): void;
   next?(): void;
   Button(props: ButtonHTMLAttributes<HTMLButtonElement>): JSX.Element;
 }
 
-export default function ImageViewer({
+export default function ImageViewer<T = unknown>({
   images,
   defaultIndex,
   onClose,
   children,
-}: Props) {
+}: Props<T>) {
   // Keep track of the currently active image index.
   const [index, setIndex] = useState(
     clamp(defaultIndex ?? 0, 0, images.length - 1)
@@ -510,6 +512,11 @@ export default function ImageViewer({
     };
   }, [buttonProps]);
 
+  const current = useCallback(() => {
+    const [, opts] = images[index];
+    return opts?.data;
+  }, [images, index]);
+
   return (
     <FocusLock autoFocus returnFocus>
       <RemoveScroll>
@@ -558,6 +565,7 @@ export default function ImageViewer({
 
         {children ? (
           children({
+            current,
             close,
             previous: index > 0 ? previousImage : undefined,
             next: index < images.length - 1 ? nextImage : undefined,

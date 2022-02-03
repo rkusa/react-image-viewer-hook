@@ -13,7 +13,7 @@ import { ChildrenHandler } from "./ImageViewer";
 
 const LazyImageViewer = lazy(() => import("./ImageViewer"));
 
-export interface ImageViewerProps {
+export interface ImageViewerProps<T = unknown> {
   /**
    * The fallback that should be rendered while the image viewer is being loaded (the image viewer
    * is lazily loaded once it is first opened).
@@ -23,21 +23,26 @@ export interface ImageViewerProps {
   /**
    * Replace the default buttons (close, next, prev) by providing your own children.
    */
-  children?(handler: ChildrenHandler): ReactNode;
+  children?(handler: ChildrenHandler<T>): ReactNode;
 }
 
-export interface ImageOpts {
+export interface ImageOpts<T = unknown> {
   /**
    * A map of mime types to source sets. Will be added as additional sources to the picture tag.
    */
   sources?: Record<string, string>;
+
+  /**
+   * Custom data that is provided to `children` when custom buttons are rendered.
+   */
+  data: T;
 }
 
 /**
  * Create an image viewer component and a `onClick` factory (`getOnClick`) used to add images to the
  * viewer and open it.
  */
-export function useImageViewer() {
+export function useImageViewer<T = undefined>() {
   // Keep track of all images added via `getOnClick`. Re-create the list on each render.
   const images = useRef<Array<[string, ImageOpts | undefined]>>([]);
   images.current.length = 0;
@@ -52,7 +57,7 @@ export function useImageViewer() {
   const ImageViewer = useCallback(function ImageViewer({
     fallback,
     children,
-  }: ImageViewerProps) {
+  }: ImageViewerProps<T>) {
     const [isOpen, setOpen] = useState<undefined | number>(undefined);
     setOpens.current.push(setOpen);
 
@@ -81,7 +86,7 @@ export function useImageViewer() {
      * the viewer once invoked.
      * @param url The URL of the image that should be added to the image viewer.
      */
-    getOnClick(url?: string, opts?: ImageOpts): MouseEventHandler {
+    getOnClick(url?: string, opts?: ImageOpts<T>): MouseEventHandler {
       const index = images.current.length;
       if (url) {
         images.current.push([url, opts]);
