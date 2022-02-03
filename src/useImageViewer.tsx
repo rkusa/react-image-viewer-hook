@@ -9,6 +9,7 @@ import React, {
   ReactNode,
   Suspense,
 } from "react";
+import { ChildrenHandler } from "./ImageViewer";
 
 const LazyImageViewer = lazy(() => import("./ImageViewer"));
 
@@ -18,6 +19,11 @@ export interface ImageViewerProps {
    * is lazily loaded once it is first opened).
    */
   fallback?: ReactNode;
+
+  /**
+   * Replace the default buttons (close, next, prev) by providing your own children.
+   */
+  children?(handler: ChildrenHandler): ReactNode;
 }
 
 export interface ImageOpts {
@@ -45,6 +51,7 @@ export function useImageViewer() {
   // A wrapper around `LazyImageViewer` that connects it with the images of this hook.
   const ImageViewer = useCallback(function ImageViewer({
     fallback,
+    children,
   }: ImageViewerProps) {
     const [isOpen, setOpen] = useState<undefined | number>(undefined);
     setOpens.current.push(setOpen);
@@ -61,6 +68,7 @@ export function useImageViewer() {
           images={images.current}
           onClose={handleClose}
           defaultIndex={isOpen}
+          children={children}
         />
       </Suspense>
     );

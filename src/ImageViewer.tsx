@@ -1,5 +1,20 @@
-import React, { useEffect, useRef, useState, MouseEvent } from "react";
-import { useSprings, useSpring, animated } from "@react-spring/web";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  MouseEvent,
+  ReactNode,
+  AllHTMLAttributes,
+  DetailedHTMLProps,
+  ButtonHTMLAttributes,
+  useMemo,
+} from "react";
+import {
+  useSprings,
+  useSpring,
+  animated,
+  SpringValue,
+} from "@react-spring/web";
 import { useGesture } from "@use-gesture/react";
 import { RemoveScroll } from "react-remove-scroll";
 import FocusLock from "react-focus-lock";
@@ -10,9 +25,22 @@ interface Props {
   images: Array<[string, ImageOpts | undefined]>;
   defaultIndex?: number;
   onClose(): void;
+  children?(handler: ChildrenHandler): ReactNode;
 }
 
-export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
+export interface ChildrenHandler {
+  close(): void;
+  previous?(): void;
+  next?(): void;
+  Button(props: ButtonHTMLAttributes<HTMLButtonElement>): JSX.Element;
+}
+
+export default function ImageViewer({
+  images,
+  defaultIndex,
+  onClose,
+  children,
+}: Props) {
   // Keep track of the currently active image index.
   const [index, setIndex] = useState(
     clamp(defaultIndex ?? 0, 0, images.length - 1)
@@ -467,6 +495,21 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
     }
   );
 
+  const Button = useMemo(() => {
+    return function Button(props: ButtonHTMLAttributes<HTMLButtonElement>) {
+      const { style, ...rest } = props;
+      return (
+        <animated.button
+          style={{
+            ...style,
+            ...buttonProps,
+          }}
+          {...rest}
+        ></animated.button>
+      );
+    };
+  }, [buttonProps]);
+
   return (
     <FocusLock autoFocus returnFocus>
       <RemoveScroll>
@@ -513,42 +556,51 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
           ))}
         </animated.div>
 
-        <animated.button
-          aria-label="close image viewer"
-          style={{
-            ...BUTTON_STYLE,
-            ...buttonProps,
-            width: 40,
-            top: 16,
-            right: 16,
-          }}
-          onClick={close}
-        >
-          <svg
-            width="24"
-            height="24"
-            fill="none"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
+        {children ? (
+          children({
+            close,
+            previous: previousImage,
+            next: nextImage,
+            Button,
+          })
+        ) : (
+          <animated.button
+            aria-label="close image viewer"
+            style={{
+              ...BUTTON_STYLE,
+              ...buttonProps,
+              width: 40,
+              top: 16,
+              right: 16,
+            }}
+            onClick={close}
           >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-              d="M17.25 6.75L6.75 17.25"
-            ></path>
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-              d="M6.75 6.75L17.25 17.25"
-            ></path>
-          </svg>
-        </animated.button>
+            <svg
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.5"
+                d="M17.25 6.75L6.75 17.25"
+              ></path>
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.5"
+                d="M6.75 6.75L17.25 17.25"
+              ></path>
+            </svg>
+          </animated.button>
+        )}
 
-        {index > 0 && (
+        {!children && index > 0 && (
           <animated.button
             aria-label="previous image"
             style={{
@@ -579,7 +631,7 @@ export default function ImageViewer({ images, defaultIndex, onClose }: Props) {
           </animated.button>
         )}
 
-        {index < images.length - 1 && (
+        {!children && index < images.length - 1 && (
           <animated.button
             aria-label="next image"
             style={{
