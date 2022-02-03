@@ -54,7 +54,7 @@ export default function ImageViewer<T = unknown>({
   // Make sure the index is never out of bounds if `images` changes.
   useEffect(() => {
     setIndex(clamp(index, 0, images.length - 1));
-  }, [images]);
+  }, [images.length]);
 
   // The current modality the image viewer is in.
   const mode = useRef<null | "dismiss" | "startSlide" | "slide" | "pinch">(

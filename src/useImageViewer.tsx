@@ -45,7 +45,7 @@ export interface ImageOpts<T = unknown> {
 export function useImageViewer<T = undefined>() {
   // Keep track of all images added via `getOnClick`. Re-create the list on each render.
   const images = useRef<Array<[string, ImageOpts | undefined]>>([]);
-  images.current.length = 0;
+  images.current = [];
 
   // Keep track of all dispatch functions used to open all `<ImageViewer />` instances.
   const setOpens = useRef<Array<Dispatch<SetStateAction<undefined | number>>>>(
