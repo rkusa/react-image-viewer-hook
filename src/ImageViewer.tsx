@@ -53,7 +53,7 @@ export default function ImageViewer<T = unknown>({
 
   // Make sure the index is never out of bounds if `images` changes.
   useEffect(() => {
-    setIndex(clamp(index, 0, images.length - 1));
+    setIndex((index) => clamp(index, 0, images.length - 1));
   }, [images.length]);
 
   // The current modality the image viewer is in.
@@ -179,6 +179,13 @@ export default function ImageViewer<T = unknown>({
       display: "none",
     });
   }
+
+  // Close the viewer if all images have been removed
+  useEffect(() => {
+    if (images.length === 0) {
+      close();
+    }
+  }, [images.length]);
 
   function nextImage() {
     setIndex((index) => clamp(index + 1, 0, images.length - 1));
