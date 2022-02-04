@@ -4,18 +4,10 @@ import React, {
   useState,
   MouseEvent,
   ReactNode,
-  AllHTMLAttributes,
-  DetailedHTMLProps,
   ButtonHTMLAttributes,
-  useMemo,
   useCallback,
 } from "react";
-import {
-  useSprings,
-  useSpring,
-  animated,
-  SpringValue,
-} from "@react-spring/web";
+import { useSprings, useSpring, animated } from "@react-spring/web";
 import { useGesture } from "@use-gesture/react";
 import { RemoveScroll } from "react-remove-scroll";
 import FocusLock from "react-focus-lock";
@@ -37,7 +29,6 @@ export interface ChildrenHandler<T = unknown> {
   close(): void;
   previous?(): void;
   next?(): void;
-  Button(props: ButtonHTMLAttributes<HTMLButtonElement>): JSX.Element;
 }
 
 export default function ImageViewer<T = unknown>({
@@ -124,7 +115,7 @@ export default function ImageViewer<T = unknown>({
 
     // Show the control buttons.
     buttonApi.start({
-      display: "flex",
+      display: "block",
     });
   }, []);
 
@@ -232,7 +223,7 @@ export default function ImageViewer<T = unknown>({
     mode.current = null;
 
     // Show the buttons again.
-    buttonApi.start({ display: "flex" });
+    buttonApi.start({ display: "block" });
   }
 
   function handleDoubleClick(e: MouseEvent) {
@@ -507,21 +498,6 @@ export default function ImageViewer<T = unknown>({
     }
   );
 
-  const Button = useMemo(() => {
-    return function Button(props: ButtonHTMLAttributes<HTMLButtonElement>) {
-      const { style, ...rest } = props;
-      return (
-        <animated.button
-          style={{
-            ...style,
-            ...buttonProps,
-          }}
-          {...rest}
-        ></animated.button>
-      );
-    };
-  }, [buttonProps]);
-
   const current = useCallback(() => {
     const [, opts] = images[index];
     return opts?.data;
@@ -573,63 +549,71 @@ export default function ImageViewer<T = unknown>({
           ))}
         </animated.div>
 
-        {children ? (
-          children({
-            current,
-            close,
-            previous: index > 0 ? previousImage : undefined,
-            next: index < images.length - 1 ? nextImage : undefined,
-            Button,
-          })
-        ) : (
-          <animated.button
-            aria-label="close image viewer"
-            style={{
-              ...BUTTON_STYLE,
-              ...buttonProps,
-              width: 40,
-              top: 16,
-              right: 16,
-            }}
-            onClick={close}
-          >
-            <CloseIcon />
-          </animated.button>
-        )}
+        <animated.div
+          style={{
+            ...buttonProps,
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: 0,
+            height: 0,
+            zIndex: 9999,
+          }}
+        >
+          {children ? (
+            children({
+              current,
+              close,
+              previous: index > 0 ? previousImage : undefined,
+              next: index < images.length - 1 ? nextImage : undefined,
+            })
+          ) : (
+            <animated.button
+              aria-label="close image viewer"
+              style={{
+                ...BUTTON_STYLE,
+                width: 40,
+                top: 16,
+                right: 16,
+              }}
+              onClick={close}
+            >
+              <CloseIcon />
+            </animated.button>
+          )}
 
-        {!children && index > 0 && (
-          <animated.button
-            aria-label="previous image"
-            style={{
-              ...BUTTON_STYLE,
-              ...buttonProps,
-              top: "50%",
-              width: 24,
-              left: 16,
-              marginTop: -20,
-            }}
-            onClick={previousImage}
-          >
-            <ChevronLeftIcon />
-          </animated.button>
-        )}
+          {!children && index > 0 && (
+            <animated.button
+              aria-label="previous image"
+              style={{
+                ...BUTTON_STYLE,
+                top: "50%",
+                width: 24,
+                left: 16,
+                marginTop: -20,
+              }}
+              onClick={previousImage}
+            >
+              <ChevronLeftIcon />
+            </animated.button>
+          )}
 
-        {!children && index < images.length - 1 && (
-          <animated.button
-            aria-label="next image"
-            style={{
-              ...BUTTON_STYLE,
-              ...buttonProps,
-              top: "50%",
-              width: 24,
-              right: 16,
-              marginTop: -20,
-            }}
-            onClick={nextImage}
-          >
-            <ChevronRightIcon />
-          </animated.button>
-        )}
+          {!children && index < images.length - 1 && (
+            <animated.button
+              aria-label="next image"
+              style={{
+                ...BUTTON_STYLE,
+                top: "50%",
+                width: 24,
+                right: 16,
+                marginTop: -20,
+              }}
+              onClick={nextImage}
+            >
+              <ChevronRightIcon />
+            </animated.button>
+          )}
+        </animated.div>
       </RemoveScroll>
     </FocusLock>
   );
