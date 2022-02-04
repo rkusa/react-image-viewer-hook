@@ -21,6 +21,9 @@ import { RemoveScroll } from "react-remove-scroll";
 import FocusLock from "react-focus-lock";
 import { BUTTON_STYLE, DIALOG_STYLE, IMAGE_STYLE, SLIDE_STYLE } from "./styles";
 import { ImageOpts } from "./useImageViewer";
+import CloseIcon from "./icons/CloseIcon";
+import ChevronLeftIcon from "./icons/ChevronLeftIcon";
+import ChevronRightIcon from "./icons/ChevronRightIcon";
 
 interface Props<T = unknown> {
   images: Array<[string, ImageOpts<T> | undefined]>;
@@ -590,28 +593,7 @@ export default function ImageViewer<T = unknown>({
             }}
             onClick={close}
           >
-            <svg
-              width="24"
-              height="24"
-              fill="none"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M17.25 6.75L6.75 17.25"
-              ></path>
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M6.75 6.75L17.25 17.25"
-              ></path>
-            </svg>
+            <CloseIcon />
           </animated.button>
         )}
 
@@ -628,21 +610,7 @@ export default function ImageViewer<T = unknown>({
             }}
             onClick={previousImage}
           >
-            <svg
-              width="18"
-              height="24"
-              fill="none"
-              viewBox="0 0 18 24"
-              aria-hidden="true"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M13.696,20.721l-9.392,-8.721l9.392,-8.721"
-              ></path>
-            </svg>
+            <ChevronLeftIcon />
           </animated.button>
         )}
 
@@ -659,21 +627,7 @@ export default function ImageViewer<T = unknown>({
             }}
             onClick={nextImage}
           >
-            <svg
-              width="18"
-              height="24"
-              fill="none"
-              viewBox="0 0 18 24"
-              aria-hidden="true"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M4.304,3.279l9.392,8.721l-9.392,8.721"
-              ></path>
-            </svg>
+            <ChevronRightIcon />
           </animated.button>
         )}
       </RemoveScroll>
