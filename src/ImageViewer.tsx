@@ -231,14 +231,22 @@ export default function ImageViewer<T = unknown>({
       return;
     }
 
-    const img = e.target as HTMLImageElement;
-    if (!(img instanceof HTMLImageElement)) {
-      console.warn("Expected double tap target to be an image");
+    let img: HTMLImageElement | null = e.target as HTMLImageElement;
+    if (!img || !(img instanceof HTMLImageElement)) {
+      img = e.currentTarget.querySelector(`img[src="${images[index][0]}"]`);
+    }
+    if (!img || !(img instanceof HTMLImageElement)) {
+      console.warn("Failed to determine active image during double tap");
       return;
     }
 
     api.start((i, ctrl) => {
       if (i !== index) {
+        return;
+      }
+
+      // make typescript happy
+      if (!img) {
         return;
       }
 
