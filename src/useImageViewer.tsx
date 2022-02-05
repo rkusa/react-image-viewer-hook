@@ -8,6 +8,7 @@ import React, {
   lazy,
   ReactNode,
   Suspense,
+  useEffect,
 } from "react";
 import { ChildrenHandler } from "./ImageViewer";
 
@@ -48,10 +49,10 @@ export function useImageViewer<T = undefined>() {
   images.current = [];
 
   // Keep track of all dispatch functions used to open all `<ImageViewer />` instances.
-  const setOpens = useRef<Array<Dispatch<SetStateAction<undefined | number>>>>(
-    []
+  const setOpens = useRef<Set<Dispatch<SetStateAction<undefined | number>>>>(
+    new Set()
   );
-  setOpens.current.length = 0;
+  setOpens.current.clear();
 
   // A wrapper around `LazyImageViewer` that connects it with the images of this hook.
   const ImageViewer = useCallback(function ImageViewer({
@@ -59,7 +60,12 @@ export function useImageViewer<T = undefined>() {
     children,
   }: ImageViewerProps<T>) {
     const [isOpen, setOpen] = useState<undefined | number>(undefined);
-    setOpens.current.push(setOpen);
+    useEffect(() => {
+      setOpens.current.add(setOpen);
+      return () => {
+        setOpens.current.delete(setOpen);
+      };
+    }, [setOpen]);
 
     const handleClose = useCallback(() => setOpen(undefined), []);
 
