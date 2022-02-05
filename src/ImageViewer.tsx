@@ -147,6 +147,16 @@ export default function ImageViewer<T = unknown>({
 
     setClosing(true);
 
+    let onCloseCalled = false;
+    function onRest() {
+      if (onCloseCalled) {
+        return;
+      }
+
+      onCloseCalled = true;
+      onClose();
+    }
+
     // Speed up close animation
     const config = {
       mass: 0.5,
@@ -165,6 +175,7 @@ export default function ImageViewer<T = unknown>({
         y: 0,
         sx: 0,
         sy: 0,
+        onRest,
         config,
       };
     });
@@ -172,7 +183,7 @@ export default function ImageViewer<T = unknown>({
     // Fade backdrop out.
     backdropApi.start({
       backgroundColor: `rgba(0, 0, 0, 0)`,
-      onRest: onClose,
+      onRest,
       config,
     });
 
