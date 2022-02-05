@@ -147,6 +147,12 @@ export default function ImageViewer<T = unknown>({
 
     setClosing(true);
 
+    // Speed up close animation
+    const config = {
+      mass: 0.5,
+      friction: 10,
+    };
+
     api.start((i) => {
       if (i !== index) {
         return;
@@ -159,6 +165,7 @@ export default function ImageViewer<T = unknown>({
         y: 0,
         sx: 0,
         sy: 0,
+        config,
       };
     });
 
@@ -166,6 +173,7 @@ export default function ImageViewer<T = unknown>({
     backdropApi.start({
       backgroundColor: `rgba(0, 0, 0, 0)`,
       onRest: onClose,
+      config,
     });
 
     // Hide the control buttons.
