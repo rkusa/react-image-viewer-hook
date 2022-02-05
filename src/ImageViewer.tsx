@@ -520,6 +520,9 @@ export default function ImageViewer<T = unknown>({
           style={{
             ...DIALOG_STYLE,
             ...backdropProps,
+            // Pass through pointer events so that the closing animation isn't stopping the user
+            // from already interacting with the elements behind the viewer.
+            pointerEvents: isClosing ? "none" : "auto",
           }}
           onDoubleClick={handleDoubleClick}
         >
