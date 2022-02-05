@@ -159,13 +159,13 @@ export default function ImageViewer<T = unknown>({
         y: 0,
         sx: 0,
         sy: 0,
-        onRest: onClose,
       };
     });
 
     // Fade backdrop out.
     backdropApi.start({
       backgroundColor: `rgba(0, 0, 0, 0)`,
+      onRest: onClose,
     });
 
     // Hide the control buttons.
@@ -176,10 +176,10 @@ export default function ImageViewer<T = unknown>({
 
   // Close the viewer if all images have been removed
   useEffect(() => {
-    if (images.length === 0) {
+    if (images.length === 0 && !isClosing) {
       close();
     }
-  }, [images.length]);
+  }, [images.length, close, isClosing]);
 
   function nextImage() {
     setIndex((index) => clamp(index + 1, 0, images.length - 1));
