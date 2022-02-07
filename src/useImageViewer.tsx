@@ -52,7 +52,6 @@ export function useImageViewer<T = undefined>() {
   const setOpens = useRef<Set<Dispatch<SetStateAction<undefined | number>>>>(
     new Set()
   );
-  setOpens.current.clear();
 
   // A wrapper around `LazyImageViewer` that connects it with the images of this hook.
   const ImageViewer = useCallback(function ImageViewer({
