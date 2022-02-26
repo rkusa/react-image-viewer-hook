@@ -12,31 +12,31 @@ import { useGesture } from "@use-gesture/react";
 import { RemoveScroll } from "react-remove-scroll";
 import FocusLock from "react-focus-lock";
 import { BUTTON_STYLE, DIALOG_STYLE, IMAGE_STYLE, SLIDE_STYLE } from "./styles";
-import { ImageOpts } from "./useImageViewer";
+import { ImageOpts, ImageOptsBase, ImageOptsWithData } from "./useImageViewer";
 import CloseIcon from "./icons/CloseIcon";
 import ChevronLeftIcon from "./icons/ChevronLeftIcon";
 import ChevronRightIcon from "./icons/ChevronRightIcon";
 
-interface Props<T = unknown> {
+export interface ImageViewerProps<T = void> {
   images: Array<[string, ImageOpts<T> | undefined]>;
   defaultIndex?: number;
   onClose(): void;
   children?(handler: ChildrenHandler<T>): ReactNode;
 }
 
-export interface ChildrenHandler<T = unknown> {
+export interface ChildrenHandler<T = void> {
   current(): T | undefined;
   close(): void;
   previous?(): void;
   next?(): void;
 }
 
-export default function ImageViewer<T = unknown>({
+export default function ImageViewer<T = void>({
   images,
   defaultIndex,
   onClose,
   children,
-}: Props<T>) {
+}: ImageViewerProps<T>) {
   // Keep track of the currently active image index.
   const [index, setIndex] = useState(
     clamp(defaultIndex ?? 0, 0, images.length - 1)
@@ -527,7 +527,11 @@ export default function ImageViewer<T = unknown>({
 
   const current = useCallback(() => {
     const [, opts] = images[index];
-    return opts?.data;
+    if (opts && isOptsWithData(opts)) {
+      return opts.data;
+    } else {
+      return undefined;
+    }
   }, [images, index]);
 
   return (
@@ -647,6 +651,12 @@ export default function ImageViewer<T = unknown>({
       </RemoveScroll>
     </FocusLock>
   );
+}
+
+function isOptsWithData<T>(
+  opts: ImageOptsBase | ImageOptsWithData<T>
+): opts is ImageOptsWithData<T> {
+  return "data" in opts;
 }
 
 function deriveMode(mx: number, my: number): "startSlide" | "dismiss" | null {

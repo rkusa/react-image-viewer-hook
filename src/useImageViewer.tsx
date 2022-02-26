@@ -9,12 +9,17 @@ import React, {
   ReactNode,
   Suspense,
   useEffect,
+  FunctionComponent,
+  ComponentType,
 } from "react";
-import { ChildrenHandler } from "./ImageViewer";
+import {
+  ChildrenHandler,
+  ImageViewerProps as InternalImageViewerProps,
+} from "./ImageViewer";
 
 const LazyImageViewer = lazy(() => import("./ImageViewer"));
 
-export interface ImageViewerProps<T = unknown> {
+export interface ImageViewerProps<T = void> {
   /**
    * The fallback that should be rendered while the image viewer is being loaded (the image viewer
    * is lazily loaded once it is first opened).
@@ -27,25 +32,31 @@ export interface ImageViewerProps<T = unknown> {
   children?(handler: ChildrenHandler<T>): ReactNode;
 }
 
-export interface ImageOpts<T = unknown> {
+export interface ImageOptsBase {
   /**
    * A map of mime types to source sets. Will be added as additional sources to the picture tag.
    */
   sources?: Record<string, string>;
+}
 
+export interface ImageOptsWithData<T> extends ImageOptsBase {
   /**
    * Custom data that is provided to `children` when custom buttons are rendered.
    */
   data: T;
 }
 
+export type ImageOpts<T = void> = T extends void
+  ? ImageOptsBase
+  : ImageOptsWithData<T>;
+
 /**
  * Create an image viewer component and a `onClick` factory (`getOnClick`) used to add images to the
  * viewer and open it.
  */
-export function useImageViewer<T = undefined>() {
+export function useImageViewer<T = void>() {
   // Keep track of all images added via `getOnClick`. Re-create the list on each render.
-  const images = useRef<Array<[string, ImageOpts | undefined]>>([]);
+  const images = useRef<Array<[string, ImageOpts<T> | undefined]>>([]);
   images.current = [];
 
   // Keep track of all dispatch functions used to open all `<ImageViewer />` instances.
@@ -72,9 +83,13 @@ export function useImageViewer<T = undefined>() {
       return null;
     }
 
+    const Viewer = LazyImageViewer as ComponentType<
+      InternalImageViewerProps<T>
+    >;
+
     return (
       <Suspense fallback={fallback ?? null}>
-        <LazyImageViewer
+        <Viewer
           images={images.current}
           onClose={handleClose}
           defaultIndex={isOpen}
