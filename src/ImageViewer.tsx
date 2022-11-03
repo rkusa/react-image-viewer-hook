@@ -526,6 +526,10 @@ export default function ImageViewer<T = void>({
   );
 
   const current = useCallback(() => {
+    if (index >= images.length) {
+      return undefined
+    }
+    
     const [, opts] = images[index];
     if (opts && isOptsWithData(opts)) {
       return opts.data;
