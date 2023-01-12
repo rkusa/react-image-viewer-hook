@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.3.1] - 2023-01-12
+### Fixed
+- Fixed another issue when deleting the last image while the viewer is open
+
 ## [0.3.0] - 2022-11-03
 ### Changed
 - Changed `data` property to be optional as long as `T` is not defined

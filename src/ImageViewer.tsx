@@ -4,7 +4,6 @@ import React, {
   useState,
   MouseEvent,
   ReactNode,
-  ButtonHTMLAttributes,
   useCallback,
 } from "react";
 import { useSprings, useSpring, animated } from "@react-spring/web";
@@ -676,6 +675,9 @@ function deriveMode(mx: number, my: number): "startSlide" | "dismiss" | null {
 }
 
 function clamp(n: number, l: number, h: number): number {
+  if (h < 0) {
+    return 0;
+  }
   if (n < l) {
     return l;
   }
